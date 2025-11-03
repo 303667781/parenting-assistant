@@ -10,15 +10,7 @@
       "use": "@vercel/node"
     },
     {
-      "src": "**/*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "**/*.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "**/*.json",
+      "src": "index.html",
       "use": "@vercel/static"
     }
   ],
