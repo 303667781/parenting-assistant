@@ -1,4 +1,3 @@
-// 使用 CommonJS 语法确保兼容性
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -8,10 +7,10 @@ module.exports = async (req, res) => {
     return res.status(200).end();
   }
   
-  return res.status(200).json({
+  res.status(200).json({
     success: true,
-    message: "🎉 API 测试成功！",
+    message: "🎉 API 服务器工作正常！",
     timestamp: new Date().toISOString(),
-    note: "Vercel 函数工作正常"
+    environment: process.env.NODE_ENV || 'production'
   });
 };
