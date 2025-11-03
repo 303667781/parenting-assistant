@@ -5,12 +5,13 @@
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",
-    "start": "serve public"
+    "start": "serve ./"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "serve": "^14.0.0"
   },
   "keywords": ["pwa", "parenting", "ai", "deepseek"],
-  "author": "Your Name",
+  "author": "您的名字",
   "license": "MIT"
 }
