@@ -1,31 +1,56 @@
 {
   "version": 2,
+  "name": "parenting-assistant",
   "builds": [
     {
-      "src": "api/deepseek.js",
+      "src": "api/**/*.js",
       "use": "@vercel/node"
     },
     {
-      "src": "api/test.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "index.html",
+      "src": "**/*.html",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/api/deepseek",
-      "dest": "/api/deepseek.js"
-    },
-    {
-      "src": "/api/test",
-      "dest": "/api/test.js"
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
     },
     {
       "src": "/(.*)",
       "dest": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        }
+      ]
     }
   ]
 }
