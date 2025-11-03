@@ -1,11 +1,16 @@
 {
   "name": "parenting-assistant",
   "version": "1.0.0",
-  "description": "AI亲子沟通话术助手",
-  "dependencies": {
-    "node-fetch": "^2.6.7"
+  "description": "亲子沟通话术助手 PWA应用",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "serve public"
   },
-  "engines": {
-    "node": "18.x"
-  }
+  "dependencies": {
+    "serve": "^14.0.0"
+  },
+  "keywords": ["pwa", "parenting", "ai", "deepseek"],
+  "author": "Your Name",
+  "license": "MIT"
 }
