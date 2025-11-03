@@ -1,8 +1,17 @@
-// api/test.js - 最简单的测试 API
-export default function handler(req, res) {
-  res.status(200).json({ 
-    success: true, 
+// 使用 CommonJS 语法确保兼容性
+module.exports = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  return res.status(200).json({
+    success: true,
     message: "🎉 API 测试成功！",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    note: "Vercel 函数工作正常"
   });
-}
+};
