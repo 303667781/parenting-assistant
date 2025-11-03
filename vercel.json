@@ -6,19 +6,19 @@
       "use": "@vercel/node"
     },
     {
-      "src": "api/test.js", 
+      "src": "api/test.js",
       "use": "@vercel/node"
     },
     {
-      "src": "*.html",
+      "src": "**/*.html",
       "use": "@vercel/static"
     },
     {
-      "src": "*.js",
+      "src": "**/*.js",
       "use": "@vercel/static"
     },
     {
-      "src": "*.json", 
+      "src": "**/*.json",
       "use": "@vercel/static"
     }
   ],
