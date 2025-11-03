@@ -2,6 +2,7 @@
   "name": "parenting-assistant",
   "version": "1.0.0",
   "description": "AI亲子沟通话术助手",
+  "type": "module",
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",
