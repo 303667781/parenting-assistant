@@ -1,8 +1,4 @@
 {
   "name": "parenting-assistant",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vercel dev"
-  }
+  "version": "1.0.0"
 }
