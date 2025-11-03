@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     }
 
     // 调用 DeepSeek API
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    const response = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -48,11 +48,14 @@ export default async function handler(req, res) {
           }
         ],
         max_tokens: 2000,
-        temperature: 0.7
+        temperature: 0.7,
+        stream: false
       })
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('DeepSeek API error:', response.status, errorText);
       throw new Error(`DeepSeek API error: ${response.status}`);
     }
 
@@ -74,7 +77,7 @@ export default async function handler(req, res) {
     // 出错时返回降级回复
     return res.status(200).json({
       success: true,
-      reply: getFallbackResponse(req.body.message, req.body.scene)
+      reply: getFallbackResponse(req.body?.message, req.body?.scene)
     });
   }
 }
