@@ -1,3 +1,4 @@
+// api/deepseek.js
 export default async function handler(req, res) {
   // 只允许 POST 请求
   if (req.method !== 'POST') {
@@ -5,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, scene, userType, requireFullReply } = req.body;
+    const { message, scene } = req.body;
 
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
@@ -34,13 +35,7 @@ export default async function handler(req, res) {
         messages: [
           {
             role: 'system',
-            content: `你是一位专业的亲子沟通专家，拥有20年儿童教育经验。请针对用户关于${getSceneName(scene)}的问题，提供专业、实用、可操作的沟通话术建议。要求：
-1. 用温暖、支持性的语言
-2. 提供具体的话术示例
-3. 分析孩子行为背后的可能原因
-4. 给出分步骤的沟通策略
-5. 保持专业但易于理解
-6. 用中文回复`
+            content: `你是一位专业的亲子沟通专家，拥有20年儿童教育经验。请针对用户关于${getSceneName(scene)}的问题，提供专业、实用、可操作的沟通话术建议。要求：用温暖、支持性的语言，提供具体话术示例，分析孩子行为背后的原因，给出分步骤的沟通策略。用中文回复。`
           },
           {
             role: 'user',
@@ -54,8 +49,6 @@ export default async function handler(req, res) {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('DeepSeek API error:', response.status, errorText);
       throw new Error(`DeepSeek API error: ${response.status}`);
     }
 
