@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>亲子沟通话术助手 - DeepSeek AI版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        #home-page {
+            display: flex;
+            flex-direction: column;
+            background: #f0f4ff;
+        }
+        
+        .app-header {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .app-title {
+            font-size: 26px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .app-subtitle {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        
+        .premium-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 10;
+        }
+        
+        .scenes-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0; /* 重要：允许内容收缩 */
+        }
+        
+        .scenes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            flex: 1;
+            gap: 12px;
+            padding: 15px;
+            background: #f0f4ff;
+            min-height: 0; /* 重要：允许网格收缩 */
+        }
+        
+        .scene-card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 18px 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border: 3px solid white;
+            min-height: 90px; /* 确保最小高度 */
+        }
+        
+        .scene-card:hover {
+            transform: translateY(-5px);
+            filter: brightness(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .scene-icon {
+            font-size: 32px;
+            margin-right: 15px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .scene-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .scene-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+        
+        .scene-desc {
+            font-size: 13px;
+            opacity: 0.9;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            line-height: 1.3;
+        }
+        
+        #homework { background: linear-gradient(135deg, #6a89cc, #4a69bd); }
+        #emotion { background: linear-gradient(135deg, #f8c291, #e55039); }
+        #discipline { background: linear-gradient(135deg, #82ccdd, #60a3bc); }
+        #screen { background: linear-gradient(135deg, #b8e994, #78e08f); }
+        #friend { background: linear-gradient(135deg, #fad390, #f6b93b); }
+        #school { background: linear-gradient(135deg, #d980fa, #9980fa); }
+        
+        #chat-page {
+            background: #f5f7fa;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 10;
+            flex-shrink: 0;
+        }
+        
+        .back-btn {
+            font-size: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+            color: #4a69bd;
+        }
+        
+        .chat-scene-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .scene-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .chat-scene-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        
+        .message {
+            max-width: 85%;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            word-wrap: break-word;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .ai-message {
+            align-self: flex-start;
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .input-area {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            flex-shrink: 0;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            outline: none;
+            font-size: 16px;
+        }
+        
+        .send-btn {
+            background: #4a69bd;
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .send-btn:hover {
+            background: #3c5aa8;
+        }
+        
+        .send-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        /* 增强加载动画 */
+        .typing-indicator {
+          align-self: flex-start;
+          background: white;
+          color: #666;
+          padding: 12px 16px;
+          border-radius: 18px;
+          border-bottom-left-radius: 4px;
+          display: none;
+          border: 1px solid #e0e0e0;
+          font-style: italic;
+        }
+
+        .typing-dots {
+          display: inline-flex;
+          align-items: center;
+          gap: 2px;
+        }
+
+        .typing-dots span {
+          animation: typing 1.4s infinite;
+          display: inline-block;
+          font-size: 18px;
+        }
+
+        .typing-dots span:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+          0%, 60%, 100% { 
+            transform: translateY(0);
+            opacity: 0.4;
+          }
+          30% { 
+            transform: translateY(-5px);
+            opacity: 1;
+          }
+        }
+
+        /* 消息发送动画 */
+        .message {
+          animation: messageAppear 0.3s ease;
+        }
+
+        @keyframes messageAppear {
+          from { 
+            opacity: 0; 
+            transform: translateY(10px) scale(0.95);
+          }
+          to { 
+            opacity: 1; 
+            transform: translateY(0) scale(1);
+          }
+        }
+        
+        .api-status {
+            text-align: center;
+            padding: 5px;
+            font-size: 12px;
+            color: #666;
+            background: #f0f4ff;
+            flex-shrink: 0;
+        }
+        
+        .error-message {
+            align-self: flex-start;
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 12px 16px;
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+            border: 1px solid #ffcccc;
+            max-width: 85%;
+            margin-bottom: 15px;
+        }
+        
+        /* 会员弹窗样式 */
+        #paywallModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .paywall-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        /* 协议页面样式 */
+        .agreement-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        
+        .agreement-content h3 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .agreement-content h4 {
+            color: #4a69bd;
+            margin: 20px 0 10px 0;
+        }
+        
+        .agreement-content p {
+            margin-bottom: 15px;
+            color: #666;
+        }
+        
+        .agreement-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .agreement-content li {
+            margin-bottom: 8px;
+            color: #666;
+        }
+        
+        /* 支付页面样式 */
+        .payment-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:hover {
+            border-color: #4a69bd;
+            background: #f8f9ff;
+        }
+        
+        .payment-method.selected {
+            border-color: #4a69bd;
+            background: #f0f4ff;
+        }
+        
+        .payment-method span {
+            font-weight: 500;
+        }
+        
+        .price-options {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .price-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .price-option.selected {
+            border-color: #4a69bd;
+            background: #f0f4ff;
+        }
+        
+        .price-option .price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .price-option .period {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .agreement-checkbox {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .agreement-checkbox input {
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+        
+        .agreement-checkbox label {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .agreement-link {
+            color: #4a69bd;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+        .pay-button {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .pay-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .pay-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        /* 会员权益页面样式 */
+        .benefits-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .benefit-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            color: #4a69bd;
+        }
+        
+        .benefit-text h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        
+        .benefit-text p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* 页脚链接 - 只在首页显示 */
+        .footer-links {
+            background: white;
+            padding: 12px 0;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .footer-links a {
+            color: #666;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 12px;
+        }
+        
+        .footer-links a:hover {
+            color: #4a69bd;
+        }
+        
+        /* 使用次数提示 */
+        .usage-limit-message {
+            background: #fff3cd;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 20px;
+            text-align: center;
+            border: 1px solid #ffeaa7;
+        }
+        
+        @media (max-width: 600px) {
+            .app-title {
+                font-size: 22px;
+            }
+            
+            .app-subtitle {
+                font-size: 13px;
+            }
+            
+            .premium-btn {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 10px auto 0;
+                display: block;
+                width: fit-content;
+            }
+            
+            .scenes-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(6, 1fr);
+                gap: 10px;
+                padding: 12px;
+            }
+            
+            .scene-card {
+                padding: 16px 12px;
+                min-height: 85px;
+            }
+            
+            .scene-icon {
+                font-size: 28px;
+                margin-right: 12px;
+            }
+            
+            .scene-title {
+                font-size: 17px;
+            }
+            
+            .scene-desc {
+                font-size: 12px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .footer-links {
+                padding: 10px 0;
+            }
+            
+            .footer-links a {
+                margin: 0 10px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .scene-card {
+                padding: 14px 10px;
+                min-height: 80px;
+            }
+            
+            .scene-icon {
+                font-size: 26px;
+                margin-right: 10px;
+            }
+            
+            .scene-title {
+                font-size: 16px;
+            }
+            
+            .footer-links a {
+                margin: 0 8px;
+                font-size: 10px;
+            }
+        }
+
+        /* 确保在小屏幕上也能正常显示 */
+        @media (max-height: 700px) {
+            .scene-card {
+                padding: 12px 10px;
+                min-height: 75px;
+            }
+            
+            .scene-icon {
+                font-size: 24px;
+            }
+            
+            .scene-title {
+                font-size: 16px;
+            }
+            
+            .scene-desc {
+                font-size: 11px;
+            }
+        }
+    </style>
+    <!-- PWA Meta Tags -->
+<meta name="application-name" content="亲子沟通话术助手">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="亲子沟通助手">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#8e44ad">
+
+<!-- Apple Touch Icons -->
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="/manifest.json">
+</head>
+<body>
+    <!-- 首页 -->
+    <div id="home-page" class="page">
+        <div class="app-header">
+            <button class="premium-btn" onclick="openPremiumModal()">
+                <i class="fas fa-crown"></i> 会员版
+            </button>
+            <div class="app-title">亲子沟通话术助手</div>
+            <div class="app-subtitle">AI亲子沟通教练 · 6大场景专业话术 · 立即改善亲子关系</div>
+        </div>
+        
+        <div class="scenes-container">
+            <div class="scenes-grid">
+                <div class="scene-card" id="homework" data-scene="homework">
+                    <div class="scene-icon">📚</div>
+                    <div class="scene-content">
+                        <div class="scene-title">作业辅导</div>
+                        <div class="scene-desc">解决学习难题，培养学习习惯</div>
+                    </div>
+                </div>
+                <div class="scene-card" id="emotion" data-scene="emotion">
+                    <div class="scene-icon">😢</div>
+                    <div class="scene-content">
+                        <div class="scene-title">情绪管理</div>
+                        <div class="scene-desc">理解孩子情绪，建立情感连接</div>
+                    </div>
+                </div>
+                <div class="scene-card" id="discipline" data-scene="discipline">
+                    <div class="scene-icon">⚖️</div>
+                    <div class="scene-content">
+                        <div class="scene-title">行为规范</div>
+                        <div class="scene-desc">设定合理界限，培养良好习惯</div>
+                    </div>
+                </div>
+                <div class="scene-card" id="screen" data-scene="screen">
+                    <div class="scene-icon">📱</div>
+                    <div class="scene-content">
+                        <div class="scene-title">屏幕时间</div>
+                        <div class="scene-desc">管理电子设备，平衡数字生活</div>
+                    </div>
+                </div>
+                <div class="scene-card" id="friend" data-scene="friend">
+                    <div class="scene-icon">👫</div>
+                    <div class="scene-content">
+                        <div class="scene-title">朋友关系</div>
+                        <div class="scene-desc">处理同伴关系，培养社交能力</div>
+                    </div>
+                </div>
+                <div class="scene-card" id="school" data-scene="school">
+                    <div class="scene-icon">🏫</div>
+                    <div class="scene-content">
+                        <div class="scene-title">学校生活</div>
+                        <div class="scene-desc">应对学业压力，处理学校事务</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚链接 - 只在首页显示 -->
+        <div class="footer-links">
+            <a href="javascript:void(0)" onclick="showUserAgreement()">用户协议</a>
+            <a href="javascript:void(0)" onclick="showPrivacyPolicy()">隐私政策</a>
+            <a href="javascript:void(0)" onclick="showBenefitsPage()">会员权益</a>
+            <a href="mailto:service@parenting-assistant.com">联系我们</a>
+        </div>
+    </div>
+    
+    <!-- 聊天页面 -->
+    <div id="chat-page" class="page">
+        <div class="chat-header">
+            <div class="back-btn" id="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="chat-scene-info">
+                <div class="scene-color" id="scene-color"></div>
+                <div class="chat-scene-title" id="chat-scene-title">作业辅导</div>
+            </div>
+        </div>
+        
+        <div class="chat-container" id="chat-container">
+            <div class="message ai-message">
+                <strong>👋 欢迎使用亲子沟通助手！</strong><br><br>
+                我是您的AI沟通教练，拥有20年儿童教育经验。<br>
+                💡 <strong>我能为您：</strong><br>
+                • 提供具体可操作的沟通话术<br>
+                • 分析孩子行为背后的原因<br>
+                • 建议有效的沟通策略<br><br>
+                请详细描述您遇到的亲子沟通问题，我会为您提供专业建议。
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typing-indicator">
+            <span>AI正在思考</span><div class="typing-dots"><span>.</span><span>.</span><span>.</span></div>
+        </div>
+        
+        <div class="api-status" id="api-status">
+            <span id="status-text">正在检查服务状态...</span>
+            <span id="usage-count" style="margin-left: 10px; display: none;">
+                | 今日剩余: <span id="free-usage">3</span> 次提问
+            </span>
+            <span id="member-status" style="margin-left: 10px; display: none;">
+                | <i class="fas fa-crown" style="color: #f39c12;"></i> 会员版
+            </span>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" class="message-input" id="message-input" placeholder="输入您的问题...">
+            <button class="send-btn" id="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- 会员弹窗 -->
+    <div id="paywallModal">
+        <div class="paywall-content">
+            <div style="font-size: 48px; margin-bottom: 15px;">👑</div>
+            <h3 style="margin-bottom: 10px; color: #333;">升级会员解锁完整功能</h3>
+            <p style="color: #666; margin-bottom: 25px;">升级会员版，享受完整服务</p>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <div style="display: flex; justify-content: center; align-items: baseline; margin-bottom: 15px;">
+                    <span style="font-size: 32px; font-weight: bold; color: #e74c3c;">¥29.9</span>
+                    <span style="color: #666; margin-left: 5px;">/月</span>
+                </div>
+                
+                <div style="text-align: left;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="color: #27ae60; margin-right: 8px;">✓</span>
+                        <span>无限次AI对话咨询</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="color: #27ae60; margin-right: 8px;">✓</span>
+                        <span>全场景话术指导</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="color: #27ae60; margin-right: 8px;">✓</span>
+                        <span>个性化沟通方案</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <span style="color: #27ae60; margin-right: 8px;">✓</span>
+                        <span>优先技术支持</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="showPaymentPage()" style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 15px;">
+                立即升级会员
+            </button>
+            <button onclick="showBenefitsPage()" style="background: transparent; color: #666; border: 1px solid #ddd; padding: 12px 30px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 10px;">
+                查看会员权益
+            </button>
+            <button onclick="closePaywall()" style="background: transparent; color: #999; border: none; padding: 10px 30px; border-radius: 8px; cursor: pointer; width: 100%;">
+                继续使用免费版
+            </button>
+        </div>
+    </div>
+    
+    <!-- 会员权益页面 -->
+    <div id="benefitsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center;">
+        <div class="benefits-content">
+            <h3 style="margin-bottom: 20px; color: #333; text-align: center;">会员专属权益</h3>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">💬</div>
+                <div class="benefit-text">
+                    <h4>无限AI对话</h4>
+                    <p>不受次数限制，随时咨询亲子沟通问题，获得专业建议</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">🎯</div>
+                <div class="benefit-text">
+                    <h4>个性化方案</h4>
+                    <p>根据您孩子的年龄、性格特点，定制专属沟通策略</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">📚</div>
+                <div class="benefit-text">
+                    <h4>全场景覆盖</h4>
+                    <p>涵盖作业、情绪、行为、屏幕时间等所有亲子沟通场景</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">🚀</div>
+                <div class="benefit-text">
+                    <h4>优先技术支持</h4>
+                    <p>专属客服通道，快速解决使用问题</p>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <div class="benefit-icon">🆕</div>
+                <div class="benefit-text">
+                    <h4>持续更新</h4>
+                    <p>定期更新话术库，紧跟教育理念发展</p>
+                </div>
+            </div>
+            
+            <button onclick="showPaymentPage()" style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px;">
+                立即开通会员
+            </button>
+            <button onclick="closeBenefits()" style="background: transparent; color: #666; border: 1px solid #ddd; padding: 12px 30px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px;">
+                返回
+            </button>
+        </div>
+    </div>
+    
+    <!-- 支付页面 -->
+    <div id="paymentModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center;">
+        <div class="payment-content">
+            <h3 style="margin-bottom: 10px; color: #333;">开通会员</h3>
+            <p style="color: #666; margin-bottom: 20px;">选择支付方式完成开通</p>
+            
+            <div class="price-options">
+                <div class="price-option selected" onclick="selectPriceOption(this, 29.9, 'month')">
+                    <div class="price">¥29.9</div>
+                    <div class="period">月度会员</div>
+                </div>
+                <div class="price-option" onclick="selectPriceOption(this, 299, 'year')">
+                    <div class="price">¥299</div>
+                    <div class="period">年度会员</div>
+                    <div style="font-size: 12px; color: #27ae60;">省¥59.8</div>
+                </div>
+            </div>
+            
+            <div class="payment-methods">
+                <div class="payment-method selected" onclick="selectPaymentMethod(this, 'wechat')">
+                    <div style="width: 30px; height: 30px; background: #07c160; border-radius: 5px; margin-right: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">微</div>
+                    <span>微信支付</span>
+                </div>
+                <div class="payment-method" onclick="selectPaymentMethod(this, 'alipay')">
+                    <div style="width: 30px; height: 30px; background: #1677ff; border-radius: 5px; margin-right: 15px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">支</div>
+                    <span>支付宝</span>
+                </div>
+            </div>
+            
+            <div class="agreement-checkbox">
+                <input type="checkbox" id="agreeCheckbox">
+                <label for="agreeCheckbox">
+                    我已阅读并同意 <span class="agreement-link" onclick="showUserAgreement()">《用户协议》</span> 和 
+                    <span class="agreement-link" onclick="showPrivacyPolicy()">《隐私政策》</span>
+                </label>
+            </div>
+            
+            <button class="pay-button" id="payButton" onclick="processPayment()" disabled>
+                立即支付 ¥29.9
+            </button>
+            
+            <button onclick="closePayment()" style="background: transparent; color: #666; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px;">
+                返回
+            </button>
+        </div>
+    </div>
+    
+    <!-- 用户协议弹窗 -->
+    <div id="agreementModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center;">
+        <div class="agreement-content">
+            <h3>用户协议</h3>
+            
+            <h4>1. 服务说明</h4>
+            <p>亲子沟通话术助手是一款基于AI技术的亲子沟通指导工具，为用户提供亲子沟通话术建议和指导。</p>
+            
+            <h4>2. 会员服务</h4>
+            <p>会员服务包括：</p>
+            <ul>
+                <li>无限次AI对话咨询</li>
+                <li>全场景话术指导</li>
+                <li>个性化沟通方案</li>
+                <li>优先技术支持</li>
+            </ul>
+            
+            <h4>3. 费用说明</h4>
+            <p>会员服务为付费订阅制，费用在购买时一次性收取。自动续费服务可在订阅期内随时取消。</p>
+            
+            <h4>4. 退款政策</h4>
+            <p>由于本产品为数字内容服务，一经购买即开始提供服务，因此不支持退款。请在购买前充分体验免费功能。</p>
+            
+            <h4>5. 使用规范</h4>
+            <p>用户不得利用本服务从事任何违法活动，不得恶意攻击系统。</p>
+            
+            <button onclick="closeAgreement()" style="background: #4a69bd; color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 20px;">
+                同意并关闭
+            </button>
+        </div>
+    </div>
+    
+    <!-- 隐私政策弹窗 -->
+    <div id="privacyModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center;">
+        <div class="agreement-content">
+            <h3>隐私政策</h3>
+            
+            <h4>1. 信息收集</h4>
+            <p>我们仅收集必要的服务使用数据，包括对话内容、使用频率等，用于改善服务质量。</p>
+            
+            <h4>2. 信息使用</h4>
+            <p>收集的信息仅用于：</p>
+            <ul>
+                <li>提供和改进AI对话服务</li>
+                <li>个性化推荐相关内容</li>
+                <li>确保服务安全稳定运行</li>
+            </ul>
+            
+            <h4>3. 数据安全</h4>
+            <p>我们采取严格的安全措施保护用户数据，防止未经授权的访问、使用或泄露。</p>
+            
+            <h4>4. 数据保留</h4>
+            <p>用户数据仅在提供服务期间保留，用户可随时要求删除个人数据。</p>
+            
+            <h4>5. 联系我们</h4>
+            <p>如对隐私政策有任何疑问，请联系：service@parenting-assistant.com</p>
+            
+            <button onclick="closePrivacy()" style="background: #4a69bd; color: white; border: none; padding: 12px 30px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 20px;">
+                同意并关闭
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 扩展话术库
+        const expandedScriptLibrary = {
+            homework: {
+                title: "作业辅导",
+                color: "#4a69bd",
+                prompts: [
+                    "我注意到你今天的作业有点多，需要我帮你规划一下时间吗？",
+                    "这道题看起来有点难，我们一起看看题目要求是什么好吗？",
+                    "你已经专注学习20分钟了，要不要休息5分钟再继续？",
+                    "我看到你在这道题上花了很长时间，要不要换个思路试试？",
+                    "作业确实有时候会让人感到烦躁，我们先完成一部分然后休息一下怎么样？",
+                    "我记得你上次数学题做得很好，这次也可以试试那种方法",
+                    "如果觉得太难，我们可以把它分解成几个小步骤来完成",
+                    "你希望我先帮你检查已经完成的部分，还是继续往下做？",
+                    "学习新知识确实需要时间，不用着急，我们一步一步来",
+                    "这个知识点确实有点抽象，我们可以找一些生活中的例子来帮助理解"
+                ],
+                tips: "作业辅导时，避免直接给出答案，多使用引导性问题。关注孩子的努力过程而非结果，帮助建立学习自信心。"
+            },
+            emotion: {
+                title: "情绪管理",
+                color: "#e55039",
+                prompts: [
+                    "你看起来有点难过，愿意和妈妈/爸爸说说发生了什么吗？",
+                    "生气是正常的情绪，但我们可以找到更好的方式表达它。",
+                    "我理解你现在很失望，换作是我可能也会这样感觉。",
+                    "当你感到焦虑时，我们可以一起做几个深呼吸来平静下来。",
+                    "这种感受一定很难受，我在这里陪着你",
+                    "每个人都会有情绪波动的时候，这很正常",
+                    "如果你不想现在说，等你想说的时候我随时在这里",
+                    "我们可以找一个安静的地方，等你感觉好一点再聊",
+                    "情绪就像天气，有时晴朗有时阴雨，但都会过去的",
+                    "我注意到你的呼吸有点急促，我们慢慢深呼吸几次好吗？"
+                ],
+                tips: "认可孩子的情绪，帮助他们给情绪命名。不要否定或忽视孩子的感受，教他们健康地表达情绪。"
+            },
+            discipline: {
+                title: "行为规范",
+                color: "#60a3bc",
+                prompts: [
+                    "我知道你想继续玩，但现在是吃饭时间了，我们约定好的规则是什么？",
+                    "在客厅里跑动可能会撞到东西受伤，我们可以在户外尽情奔跑。",
+                    "我理解你很生气，但打人不是解决问题的方式，我们可以用语言表达感受。",
+                    "玩具玩完后要放回原处，这样下次找起来更方便，需要我帮你一起整理吗？",
+                    "我们家的规则是晚上9点前要完成作业，现在7点半，你计划怎么安排？",
+                    "大声说话会打扰到别人，我们可以试试用正常的音量交流",
+                    "我理解你想吃糖，但糖吃多了对牙齿不好，我们可以选择水果作为零食",
+                    "看到别人玩得开心，直接拿走玩具是不礼貌的，我们可以问问是否可以一起玩",
+                    "公共场所我们需要考虑其他人的感受，说话音量可以稍微低一些",
+                    "我知道你很想现在就买这个玩具，但我们之前约定好一个月只买一次玩具"
+                ],
+                tips: "设定清晰一致的规则，解释规则背后的原因。使用积极的语言引导，而非简单禁止。"
+            },
+            screen: {
+                title: "屏幕时间",
+                color: "#78e08f",
+                prompts: [
+                    "这个游戏看起来很有趣，但我们约定的屏幕时间快到了，你希望自己关还是我提醒你？",
+                    "长时间看屏幕对眼睛不好，我们休息一下做点其他有趣的事情吧。",
+                    "我注意到你最近花很多时间在平板上，是有什么特别吸引你的内容吗？",
+                    "我们可以一起制定一个合理的屏幕时间计划，平衡学习和娱乐。",
+                    "看屏幕时间到了，你是想现在关掉，还是再玩5分钟然后关？",
+                    "我们可以把屏幕时间当作完成作业后的奖励，你觉得怎么样？",
+                    "我担心长时间看屏幕会影响你的视力，我们设定一个计时器好吗？",
+                    "除了电子产品，我们还可以一起玩桌游或者户外活动，你想试试吗？",
+                    "这个游戏/视频看起来很有意思，能和我分享一下它哪里吸引你吗？",
+                    "电子产品是我们生活的工具，而不是生活的全部，我们需要学会控制使用时间"
+                ],
+                tips: "提前约定屏幕时间规则，使用计时器帮助孩子建立时间观念。提供有趣的替代活动，减少对电子设备的依赖。"
+            },
+            friend: {
+                title: "朋友关系",
+                color: "#f6b93b",
+                prompts: [
+                    "我理解你和朋友之间有些不愉快，愿意和我说说发生了什么吗？",
+                    "朋友之间有时会有不同意见，这是正常的，重要的是如何沟通解决。",
+                    "如果你和朋友有矛盾，试着从对方的角度想一想，也许会有不同的理解。",
+                    "真正的朋友会尊重你的感受，如果对方总是让你不开心，可以考虑保持一点距离。",
+                    "交新朋友有时候需要勇气，你可以先从共同兴趣开始聊起",
+                    "朋友之间互相帮助很重要，但也要学会说'不'保护自己",
+                    "如果朋友做了让你不舒服的事，可以直接但友好地告诉他你的感受",
+                    "每个人都有优点和缺点，朋友之间要学会互相包容",
+                    "友谊需要时间和耐心来培养，不用急于求成",
+                    "真正的朋友会在你困难时支持你，而不是嘲笑你"
+                ],
+                tips: "帮助孩子理解友谊的真谛，教他们设立健康的人际边界，同时培养解决冲突的能力。"
+            },
+            school: {
+                title: "学校生活",
+                color: "#9980fa",
+                prompts: [
+                    "今天在学校有什么特别开心或者有趣的事情想分享吗？",
+                    "我注意到你最近不太想谈论学校的事情，是遇到什么困难了吗？",
+                    "朋友之间有时会有矛盾，这是正常的，需要我帮你想想怎么解决吗？",
+                    "老师反馈说你在课堂上很积极参与，我为你感到骄傲！",
+                    "新学期开始可能会有些不适应，这很正常，我们可以一起慢慢调整",
+                    "如果遇到学习上的困难，除了问我，也可以主动向老师请教",
+                    "参加课外活动是认识新朋友的好机会，你有兴趣尝试什么活动吗？",
+                    "考试只是检验学习的方式之一，重要的是你真正掌握了知识",
+                    "每个老师教学风格不同，我们可以讨论如何适应不同老师的教学方法",
+                    "学校不只是学习知识的地方，也是学习如何与人相处的地方"
+                ],
+                tips: "使用开放式问题了解孩子的学校生活，避免简单的是/否问题。关注孩子的社交和情感发展，而不仅仅是学业表现。"
+            }
+        };
+        
+        // 页面元素
+        const homePage = document.getElementById('home-page');
+        const chatPage = document.getElementById('chat-page');
+        const sceneCards = document.querySelectorAll('.scene-card');
+        const backBtn = document.getElementById('back-btn');
+        const sceneColor = document.getElementById('scene-color');
+        const chatSceneTitle = document.getElementById('chat-scene-title');
+        const chatContainer = document.getElementById('chat-container');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const typingIndicator = document.getElementById('typing-indicator');
+        const apiStatus = document.getElementById('api-status');
+        
+        let currentScene = null;
+        let currentSceneColor = null;
+        
+        // 支付相关变量
+        let selectedPrice = 29.9;
+        let selectedPeriod = 'month';
+        let selectedPaymentMethod = 'wechat';
+        
+        // 初始化页面显示状态
+        function initializePageDisplay() {
+            // 强制设置首页显示，聊天页面隐藏
+            homePage.style.display = 'flex';
+            chatPage.style.display = 'none';
+            
+            // 隐藏所有模态框
+            const modals = document.querySelectorAll('[id$="Modal"]');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+        
+        // 修复场景点击功能
+        function initializeSceneCards() {
+            sceneCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const sceneId = this.getAttribute('data-scene');
+                    currentScene = sceneId;
+                    currentSceneColor = expandedScriptLibrary[sceneId].color;
+                    
+                    sceneColor.style.backgroundColor = expandedScriptLibrary[sceneId].color;
+                    chatSceneTitle.textContent = expandedScriptLibrary[sceneId].title;
+                    
+                    // 切换到聊天页面
+                    homePage.style.display = 'none';
+                    chatPage.style.display = 'flex';
+                    
+                    // 清空之前的消息，只保留欢迎消息
+                    const messages = chatContainer.querySelectorAll('.message');
+                    messages.forEach((msg, index) => {
+                        if (index > 0) msg.remove();
+                    });
+                    
+                    addAIMessage(`关于${expandedScriptLibrary[sceneId].title}，我可以帮您：<br>• 提供具体情境下的沟通话术<br>• 分析孩子行为背后的原因<br>• 建议有效的沟通策略<br><br>${expandedScriptLibrary[sceneId].tips}`);
+                });
+            });
+        }
+        
+        // 返回按钮功能
+        backBtn.addEventListener('click', function() {
+            chatPage.style.display = 'none';
+            homePage.style.display = 'flex';
+        });
+        
+        // 发送消息功能
+        async function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text) return;
+            
+            addUserMessage(text);
+            messageInput.value = '';
+            sendBtn.disabled = true;
+            
+            typingIndicator.style.display = 'block';
+            
+            try {
+                let aiResponse;
+                
+                // 检查使用次数
+                const isMember = checkMembershipStatus();
+                if (!isMember) {
+                    const today = new Date().toDateString();
+                    const lastUsed = localStorage.getItem('lastUsedDate');
+                    let dailyCount = parseInt(localStorage.getItem('dailyUsageCount') || '0');
+                    
+                    if (lastUsed !== today) {
+                        dailyCount = 0;
+                        localStorage.setItem('lastUsedDate', today);
+                    }
+                    
+                    if (dailyCount >= 3) {
+                        typingIndicator.style.display = 'none';
+                        alert('今日免费次数已用完，请升级会员享受无限对话');
+                        sendBtn.disabled = false;
+                        return;
+                    }
+                    
+                    dailyCount++;
+                    localStorage.setItem('dailyUsageCount', dailyCount.toString());
+                    updateUsageDisplay();
+                }
+                
+                // 模拟AI回复
+                aiResponse = await callDeepSeekAPI(text);
+                
+                typingIndicator.style.display = 'none';
+                addAIMessage(aiResponse);
+                
+            } catch (error) {
+                console.error("发送消息时出错:", error);
+                typingIndicator.style.display = 'none';
+                
+                // 出错时使用本地回复
+                const localResponse = generateLocalResponse(text);
+                addAIMessage("<small><em>提示：AI服务暂时不可用，已切换到本地回复</em></small><br><br>" + localResponse);
+            } finally {
+                sendBtn.disabled = false;
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+        
+        // 添加用户消息
+        function addUserMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.textContent = text;
+            messageDiv.style.background = currentSceneColor || '#4a69bd';
+            chatContainer.appendChild(messageDiv);
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 添加AI消息
+        function addAIMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai-message';
+            messageDiv.innerHTML = text;
+            chatContainer.appendChild(messageDiv);
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // 生成本地回复
+        function generateLocalResponse(userInput) {
+            if (!currentScene) return "请先选择一个场景。";
+            
+            const prompts = expandedScriptLibrary[currentScene].prompts;
+            const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+            
+            let additionalTip = "";
+            
+            if (userInput.includes('生气') || userInput.includes('愤怒') || userInput.includes('发脾气')) {
+                additionalTip = "<br><br><strong>小贴士：</strong>当孩子情绪激动时，先帮助他平静下来，再讨论问题本身。";
+            } else if (userInput.includes('不听话') || userInput.includes('反抗') || userInput.includes('顶嘴')) {
+                additionalTip = "<br><br><strong>小贴士：</strong>给孩子有限的选择权，而不是简单命令，可以减少权力斗争。";
+            } else if (userInput.includes('学习') || userInput.includes('成绩') || userInput.includes('考试')) {
+                additionalTip = "<br><br><strong>小贴士：</strong>关注学习过程而非结果，帮助孩子建立成长型思维。";
+            } else if (userInput.includes('朋友') || userInput.includes('同学') || userInput.includes('社交')) {
+                additionalTip = "<br><br><strong>小贴士：</strong>教孩子社交技巧比直接介入解决问题更有效。";
+            } else if (userInput.includes('手机') || userInput.includes('平板') || userInput.includes('游戏')) {
+                additionalTip = "<br><br><strong>小贴士：</strong>与孩子共同制定屏幕时间规则，比单纯限制更有效。";
+            } else if (userInput.includes('规则') || userInput.includes('纪律') || userInput.includes('不守规矩')) {
+                additionalTip = "<br><br><strong>小贴士：</strong>解释规则背后的原因，让孩子理解而不仅仅是服从。";
+            }
+            
+            return randomPrompt + additionalTip;
+        }
+        
+async function callDeepSeekAPI(userInput) {
+    try {
+        const response = await fetch('/api/deepseek', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: userInput,
+                scene: currentScene,
+                userType: checkMembershipStatus() ? 'premium' : 'free',
+                requireFullReply: checkMembershipStatus()
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('网络响应不正常');
+        }
+
+        const data = await response.json();
+        if (data.success) {
+            return data.reply;
+        } else {
+            throw new Error(data.error);
+        }
+    } catch (error) {
+        console.error('API调用失败:', error);
+        // 出错时使用本地回复
+        return generateLocalResponse(userInput);
+    }
+}
+        
+        // 检查API状态
+        function checkAPIStatus() {
+            try {
+                apiStatus.textContent = "✅ 服务正常 - 使用安全API连接";
+                apiStatus.style.color = "#27ae60";
+                return true;
+            } catch (error) {
+                apiStatus.textContent = "❌ 无法连接服务";
+                apiStatus.style.color = "#e74c3c";
+                return false;
+            }
+        }
+        
+        // 显示支付页面
+        function showPaymentPage() {
+            document.getElementById('paywallModal').style.display = 'none';
+            document.getElementById('benefitsModal').style.display = 'none';
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+        
+        // 显示会员权益页面
+        function showBenefitsPage() {
+            document.getElementById('paywallModal').style.display = 'none';
+            document.getElementById('benefitsModal').style.display = 'flex';
+        }
+        
+        // 关闭会员权益页面
+        function closeBenefits() {
+            document.getElementById('benefitsModal').style.display = 'none';
+            document.getElementById('paywallModal').style.display = 'flex';
+        }
+        
+        // 关闭支付页面
+        function closePayment() {
+            document.getElementById('paymentModal').style.display = 'none';
+            document.getElementById('paywallModal').style.display = 'flex';
+        }
+        
+        // 选择价格选项
+        function selectPriceOption(element, price, period) {
+            document.querySelectorAll('.price-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedPrice = price;
+            selectedPeriod = period;
+            updatePayButton();
+        }
+        
+        // 选择支付方式
+        function selectPaymentMethod(element, method) {
+            document.querySelectorAll('.payment-method').forEach(m => {
+                m.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedPaymentMethod = method;
+        }
+        
+        // 更新支付按钮
+        function updatePayButton() {
+            const payButton = document.getElementById('payButton');
+            const agreeCheckbox = document.getElementById('agreeCheckbox');
+            
+            payButton.textContent = `立即支付 ¥${selectedPrice}`;
+            payButton.disabled = !agreeCheckbox.checked;
+        }
+        
+        // 显示用户协议
+        function showUserAgreement() {
+            document.getElementById('agreementModal').style.display = 'flex';
+        }
+        
+        // 关闭用户协议
+        function closeAgreement() {
+            document.getElementById('agreementModal').style.display = 'none';
+        }
+        
+        // 显示隐私政策
+        function showPrivacyPolicy() {
+            document.getElementById('privacyModal').style.display = 'flex';
+        }
+        
+        // 关闭隐私政策
+        function closePrivacy() {
+            document.getElementById('privacyModal').style.display = 'none';
+        }
+        
+        // 处理支付
+        async function processPayment() {
+            const payButton = document.getElementById('payButton');
+            const originalText = payButton.textContent;
+            
+            try {
+                // 显示支付中状态
+                payButton.disabled = true;
+                payButton.textContent = '支付处理中...';
+                
+                // 模拟支付处理
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // 支付成功
+                localStorage.setItem('isPaidUser', 'true');
+                localStorage.setItem('membershipExpire', getExpireDate(selectedPeriod));
+                localStorage.setItem('membershipType', selectedPeriod);
+                localStorage.setItem('purchaseDate', new Date().toISOString());
+                
+                // 更新界面
+                updateUsageDisplay();
+                
+                // 显示成功消息
+                alert('🎉 支付成功！欢迎加入会员！');
+                
+                // 关闭支付页面
+                closePayment();
+                closePaywall();
+                
+            } catch (error) {
+                console.error('支付失败:', error);
+                alert('支付失败，请重试或联系客服');
+            } finally {
+                payButton.disabled = false;
+                payButton.textContent = originalText;
+            }
+        }
+        
+        // 计算到期日期
+        function getExpireDate(period) {
+            const now = new Date();
+            if (period === 'month') {
+                now.setMonth(now.getMonth() + 1);
+            } else if (period === 'year') {
+                now.setFullYear(now.getFullYear() + 1);
+            }
+            return now.toISOString();
+        }
+        
+        // 检查会员状态
+        function checkMembershipStatus() {
+            const isPaid = localStorage.getItem('isPaidUser') === 'true';
+            const expireDate = localStorage.getItem('membershipExpire');
+            
+            if (isPaid && expireDate) {
+                const now = new Date();
+                const expire = new Date(expireDate);
+                if (now > expire) {
+                    // 会员已过期
+                    localStorage.setItem('isPaidUser', 'false');
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+        
+        // 更新使用情况显示
+        function updateUsageDisplay() {
+            const usageCountElement = document.getElementById('usage-count');
+            const memberStatusElement = document.getElementById('member-status');
+            const statusTextElement = document.getElementById('status-text');
+            
+            const isMember = checkMembershipStatus();
+            
+            if (isMember) {
+                if (usageCountElement) usageCountElement.style.display = 'none';
+                if (memberStatusElement) memberStatusElement.style.display = 'inline';
+                if (statusTextElement) statusTextElement.textContent = '会员服务正常';
+            } else {
+                if (usageCountElement) usageCountElement.style.display = 'inline';
+                if (memberStatusElement) memberStatusElement.style.display = 'none';
+                if (statusTextElement) statusTextElement.textContent = '免费服务正常';
+                
+                // 设置免费次数限制
+                const freeUsage = document.getElementById('free-usage');
+                if (freeUsage) {
+                    const today = new Date().toDateString();
+                    const lastUsed = localStorage.getItem('lastUsedDate');
+                    let dailyCount = parseInt(localStorage.getItem('dailyUsageCount') || '0');
+                    
+                    if (lastUsed !== today) {
+                        dailyCount = 0;
+                        localStorage.setItem('lastUsedDate', today);
+                    }
+                    
+                    const remaining = Math.max(0, 3 - dailyCount);
+                    freeUsage.textContent = remaining;
+                    
+                    // 如果次数用完，显示升级提示
+                    if (remaining === 0) {
+                        statusTextElement.textContent = '今日免费次数已用完';
+                        statusTextElement.style.color = '#e74c3c';
+                    }
+                }
+            }
+        }
+
+        // 会员功能
+        function openPremiumModal() {
+            document.getElementById('paywallModal').style.display = 'flex';
+        }
+        
+        function closePaywall() {
+            document.getElementById('paywallModal').style.display = 'none';
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 第一步：初始化页面显示状态
+            initializePageDisplay();
+            
+            // 第二步：初始化场景卡片
+            initializeSceneCards();
+            
+            // 第三步：绑定事件监听器
+            sendBtn.addEventListener('click', sendMessage);
+            
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            const agreeCheckbox = document.getElementById('agreeCheckbox');
+            if (agreeCheckbox) {
+                agreeCheckbox.addEventListener('change', updatePayButton);
+            }
+            
+            // 第四步：初始化功能状态
+            updateUsageDisplay();
+            checkAPIStatus();
+        });
+    </script>
+    <script>
+  // 注册 Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js')
+        .then(function(registration) {
+          console.log('ServiceWorker 注册成功: ', registration.scope);
+        })
+        .catch(function(error) {
+          console.log('ServiceWorker 注册失败: ', error);
+        });
+    });
+  }
+
+  // 添加到主屏幕提示
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // 可以在这里显示安装提示按钮
+    console.log('可以安装为 PWA 应用');
+  });
+</script>
+</body>
+</html>

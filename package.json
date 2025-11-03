@@ -1,0 +1,16 @@
+{
+  "name": "parenting-assistant",
+  "version": "1.0.0",
+  "description": "AI亲子沟通话术助手",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required for static site'"
+  },
+  "dependencies": {
+    "@vercel/node": "^2.0.0"
+  },
+  "keywords": ["parenting", "ai", "pwa"],
+  "author": "Your Name",
+  "license": "MIT"
+}
