@@ -1,12 +1,10 @@
+const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+
 export default async function handler(req, res) {
   // 设置CORS头
-  res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
 
   // 处理预检请求
   if (req.method === 'OPTIONS') {
@@ -16,23 +14,25 @@ export default async function handler(req, res) {
 
   // 只允许POST请求
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: '只允许POST请求' });
   }
 
   try {
-    const { message, scene, userType, requireFullReply } = req.body;
+    const { message, scene } = req.body;
 
     if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
+      return res.status(400).json({ error: '消息内容不能为空' });
     }
 
-    // 这里替换成您的DeepSeek API密钥
+    // 从环境变量获取API密钥
     const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
-    const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
     if (!DEEPSEEK_API_KEY) {
-      console.error('DeepSeek API key is missing');
-      return res.status(500).json({ error: 'API configuration error' });
+      console.error('DeepSeek API密钥未设置');
+      return res.status(500).json({ 
+        success: false,
+        error: '服务配置错误，请检查API密钥设置' 
+      });
     }
 
     // 根据场景构建系统提示
@@ -66,14 +66,15 @@ export default async function handler(req, res) {
           }
         ],
         max_tokens: 2000,
-        temperature: 0.7
+        temperature: 0.7,
+        stream: false
       })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('DeepSeek API error:', response.status, errorText);
-      throw new Error(`API request failed with status ${response.status}`);
+      console.error('DeepSeek API错误:', response.status, errorText);
+      throw new Error(`API请求失败: ${response.status}`);
     }
 
     const data = await response.json();
@@ -85,14 +86,14 @@ export default async function handler(req, res) {
         reply: reply
       });
     } else {
-      throw new Error('Invalid response format from DeepSeek API');
+      throw new Error('DeepSeek API返回格式异常');
     }
 
   } catch (error) {
-    console.error('Error calling DeepSeek API:', error);
+    console.error('调用DeepSeek API出错:', error);
     return res.status(500).json({
       success: false,
-      error: error.message || 'Internal server error'
+      error: error.message || '服务器内部错误'
     });
   }
 }
