@@ -1,18 +1,7 @@
 {
   "functions": {
-    "api/deepseek.js": {
-      "maxDuration": 30
+    "api/*.js": {
+      "maxDuration": 10
     }
-  },
-  "headers": [
-    {
-      "source": "/sw.js",
-      "headers": [
-        {
-          "key": "Service-Worker-Allowed",
-          "value": "/"
-        }
-      ]
-    }
-  ]
+  }
 }
