@@ -8,9 +8,7 @@
     "dev": "vercel dev",
     "build": "echo 'No build step required for static site'"
   },
-  "dependencies": {
-    "@vercel/node": "^2.0.0"
-  },
+  "dependencies": {},
   "keywords": ["parenting", "ai", "pwa"],
   "author": "Your Name",
   "license": "MIT"
