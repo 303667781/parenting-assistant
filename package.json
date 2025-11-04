@@ -5,8 +5,8 @@
   "type": "module",
   "main": "index.html",
   "scripts": {
-    "dev": "vite", // 或者 "serve ."
-    "build": "echo 'No build step for static site'", // 添加这一行
+    "dev": "vite", 
+    "build": "echo 'No build step for static site'", 
     "start": "serve ."
   },
   "dependencies": {},
@@ -17,3 +17,4 @@
   "author": "您的名字",
   "license": "MIT"
 }
+
