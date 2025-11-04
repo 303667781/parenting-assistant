@@ -10,10 +10,15 @@
     "build": "echo '构建完成' && exit 0"
   },
   "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
     "serve": "^14.0.0"
   },
-  "devDependencies": {},
   "keywords": ["pwa", "parenting", "ai", "deepseek"],
   "author": "您的名字",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
 }
