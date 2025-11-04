@@ -1,6 +1,7 @@
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
-export default async function handler(req, res) {
+// 使用module.exports代替export default
+module.exports = async function handler(req, res) {
   // 设置CORS头
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -96,4 +97,4 @@ export default async function handler(req, res) {
       error: error.message || '服务器内部错误'
     });
   }
-}
+};
