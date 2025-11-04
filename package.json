@@ -2,19 +2,18 @@
   "name": "parenting-assistant",
   "version": "1.0.0",
   "description": "亲子沟通话术助手 PWA应用",
-  "type": "module",
+  "type": "commonjs",
   "main": "index.html",
   "scripts": {
-    "dev": "vite", 
-    "build": "echo 'No build step for static site'", 
-    "start": "serve ."
+    "dev": "serve .",
+    "start": "serve .",
+    "build": "echo '构建完成' && exit 0"
   },
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "serve": "^14.0.0"
   },
+  "devDependencies": {},
   "keywords": ["pwa", "parenting", "ai", "deepseek"],
   "author": "您的名字",
   "license": "MIT"
 }
-
