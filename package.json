@@ -2,10 +2,12 @@
   "name": "parenting-assistant",
   "version": "1.0.0",
   "description": "亲子沟通话术助手 PWA应用",
+  "type": "module",
   "main": "index.html",
   "scripts": {
-    "dev": "vercel dev",
-    "start": "serve ./"
+    "dev": "vite", // 或者 "serve ."
+    "build": "echo 'No build step for static site'", // 添加这一行
+    "start": "serve ."
   },
   "dependencies": {},
   "devDependencies": {
