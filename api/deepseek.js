@@ -22,15 +22,15 @@ module.exports = async function handler(req, res) {
 
   try {
     console.log('解析请求体...');
-    let body = '';
+    let bodyData = '';
     req.on('data', chunk => {
-      body += chunk.toString();
+      bodyData += chunk.toString();
     });
     
     req.on('end', async () => {
       try {
-        const requestBody = JSON.parse(body);
-        const { message, scene } = requestBody;
+        const requestData = JSON.parse(bodyData);
+        const { message, scene } = requestData;
 
         console.log('请求参数:', { message, scene });
 
@@ -66,7 +66,8 @@ module.exports = async function handler(req, res) {
 
         console.log('准备调用DeepSeek API，场景:', scene);
         
-        const requestBody = {
+        // 注意：这里将变量名改为deepseekRequest避免冲突
+        const deepseekRequest = {
           model: "deepseek-chat",
           messages: [
             {
@@ -83,7 +84,7 @@ module.exports = async function handler(req, res) {
           stream: false
         };
 
-        console.log('请求体:', JSON.stringify(requestBody).substring(0, 200) + '...');
+        console.log('请求体:', JSON.stringify(deepseekRequest).substring(0, 200) + '...');
 
         const response = await fetch(DEEPSEEK_API_URL, {
           method: 'POST',
@@ -91,7 +92,7 @@ module.exports = async function handler(req, res) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
           },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify(deepseekRequest),
           timeout: 30000
         });
 
@@ -107,18 +108,18 @@ module.exports = async function handler(req, res) {
           });
         }
 
-        const data = await response.json();
-        console.log('DeepSeek API返回数据:', JSON.stringify(data).substring(0, 300) + '...');
+        const responseData = await response.json();
+        console.log('DeepSeek API返回数据:', JSON.stringify(responseData).substring(0, 300) + '...');
         
-        if (data.choices && data.choices.length > 0 && data.choices[0].message) {
-          const reply = data.choices[0].message.content;
+        if (responseData.choices && responseData.choices.length > 0 && responseData.choices[0].message) {
+          const reply = responseData.choices[0].message.content;
           console.log('成功生成回复，长度:', reply.length);
           return res.status(200).json({
             success: true,
             reply: reply
           });
         } else {
-          console.error('DeepSeek API返回格式异常:', JSON.stringify(data));
+          console.error('DeepSeek API返回格式异常:', JSON.stringify(responseData));
           throw new Error('DeepSeek API返回格式异常');
         }
       } catch (parseError) {
