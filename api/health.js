@@ -1,21 +1,16 @@
-// api/health.js - 健康检查文件
-module.exports = async (req, res) => {
-  console.log('健康检查被调用');
-  
+export default function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.status(200).end();
+    return;
   }
   
-  if (req.method === 'GET') {
-    return res.status(200).json({ 
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      message: 'API服务正常'
-    });
-  }
-  
-  return res.status(405).json({ error: '只允许GET请求' });
-};
+  res.status(200).json({ 
+    status: 'ok', 
+    message: '亲子沟通助手服务运行正常',
+    timestamp: new Date().toISOString(),
+    version: '1.0.0'
+  });
+}
