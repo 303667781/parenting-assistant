@@ -2,12 +2,13 @@
   "name": "parenting-assistant",
   "version": "1.0.0",
   "description": "亲子沟通话术助手 PWA应用",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.html",
   "scripts": {
-    "dev": "serve .",
-    "start": "serve .",
-    "build": "echo '构建完成' && exit 0"
+    "dev": "serve . -p 3000",
+    "start": "serve . -p 3000",
+    "build": "echo 'No build process needed'",
+    "vercel-build": "echo 'Vercel build completed'"
   },
   "dependencies": {
     "node-fetch": "^3.3.2"
@@ -16,7 +17,7 @@
     "serve": "^14.0.0"
   },
   "keywords": ["pwa", "parenting", "ai", "deepseek"],
-  "author": "您的名字",
+  "author": "亲子助手",
   "license": "MIT",
   "engines": {
     "node": ">=18"
