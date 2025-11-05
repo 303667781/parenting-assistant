@@ -2,6 +2,9 @@ import fetch from 'node-fetch';
 
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
+// 设置超时时间（Vercel免费版最大25秒）
+const TIMEOUT_MS = 25000;
+
 export default async function handler(req, res) {
   // 设置CORS头
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,6 +25,17 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: '只允许POST请求' });
   }
 
+  // 设置超时
+  const timeoutId = setTimeout(() => {
+    if (!res.headersSent) {
+      res.status(504).json({
+        success: false,
+        error: '请求超时，请稍后重试',
+        type: 'TIMEOUT'
+      });
+    }
+  }, TIMEOUT_MS);
+
   try {
     let requestData;
     
@@ -36,6 +50,7 @@ export default async function handler(req, res) {
 
     if (!message) {
       console.warn('消息内容为空');
+      clearTimeout(timeoutId);
       return res.status(400).json({ error: '消息内容不能为空' });
     }
 
@@ -45,6 +60,7 @@ export default async function handler(req, res) {
 
     if (!DEEPSEEK_API_KEY) {
       console.error('DeepSeek API密钥未设置');
+      clearTimeout(timeoutId);
       return res.status(500).json({ 
         success: false,
         error: '服务配置错误：API密钥未设置',
@@ -145,70 +161,56 @@ ${message}
           content: userMessage
         }
       ],
-      max_tokens: 2500,
+      max_tokens: 2000,  // 减少token数量以加快响应
       temperature: 0.8,
       stream: false
     };
 
     console.log('请求体长度:', JSON.stringify(deepseekRequest).length);
 
-    // 添加超时控制
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-      console.error('API请求超时（30秒）');
-    }, 30000);
+    // 调用DeepSeek API
+    const response = await fetch(DEEPSEEK_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+      },
+      body: JSON.stringify(deepseekRequest)
+    });
 
-    try {
-      const response = await fetch(DEEPSEEK_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-        },
-        body: JSON.stringify(deepseekRequest),
-        signal: controller.signal
+    console.log('DeepSeek API响应状态:', response.status);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('DeepSeek API错误详情:', response.status, errorText);
+      clearTimeout(timeoutId);
+      return res.status(500).json({ 
+        success: false,
+        error: `API请求失败: ${response.status}`,
+        details: errorText.substring(0, 500)
       });
+    }
 
+    const responseData = await response.json();
+    console.log('DeepSeek API返回数据长度:', JSON.stringify(responseData).length);
+    
+    if (responseData.choices && responseData.choices.length > 0 && responseData.choices[0].message) {
+      const reply = responseData.choices[0].message.content;
+      console.log('成功生成回复，长度:', reply.length);
       clearTimeout(timeoutId);
-
-      console.log('DeepSeek API响应状态:', response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('DeepSeek API错误详情:', response.status, errorText);
-        return res.status(500).json({ 
-          success: false,
-          error: `API请求失败: ${response.status}`,
-          details: errorText.substring(0, 500)
-        });
-      }
-
-      const responseData = await response.json();
-      console.log('DeepSeek API返回数据长度:', JSON.stringify(responseData).length);
-      
-      if (responseData.choices && responseData.choices.length > 0 && responseData.choices[0].message) {
-        const reply = responseData.choices[0].message.content;
-        console.log('成功生成回复，长度:', reply.length);
-        return res.status(200).json({
-          success: true,
-          reply: reply
-        });
-      } else {
-        console.error('DeepSeek API返回格式异常');
-        throw new Error('DeepSeek API返回格式异常');
-      }
-    } catch (fetchError) {
+      return res.status(200).json({
+        success: true,
+        reply: reply
+      });
+    } else {
+      console.error('DeepSeek API返回格式异常');
       clearTimeout(timeoutId);
-      if (fetchError.name === 'AbortError') {
-        console.error('API请求超时');
-        throw new Error('API请求超时，请稍后重试');
-      }
-      throw fetchError;
+      throw new Error('DeepSeek API返回格式异常');
     }
 
   } catch (error) {
     console.error('处理请求出错:', error);
+    clearTimeout(timeoutId);
     return res.status(500).json({
       success: false,
       error: error.message || '服务器内部错误',
