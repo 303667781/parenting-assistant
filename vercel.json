@@ -2,11 +2,15 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/**/*.js",
+      "src": "api/deepseek.js",
       "use": "@vercel/node"
     },
     {
-      "src": "**/*.html",
+      "src": "api/health.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "index.html",
       "use": "@vercel/static"
     },
     {
@@ -25,16 +29,20 @@
     },
     {
       "src": "/api/deepseek",
-      "dest": "/api/deepseek.js"
+      "dest": "/api/deepseek.js",
+      "methods": ["GET", "POST", "OPTIONS"]
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/sw.js",
+      "dest": "/sw.js"
     },
     {
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "functions": {
-    "api/deepseek.js": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
