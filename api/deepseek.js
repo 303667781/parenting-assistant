@@ -1,6 +1,8 @@
+import fetch from 'node-fetch';
+
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   // 设置CORS头
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -21,30 +23,13 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // 使用Promise包装请求体解析，确保日志可记录
-    const requestData = await new Promise((resolve, reject) => {
-      let bodyData = '';
-      req.on('data', chunk => {
-        bodyData += chunk.toString();
-        console.log('接收数据块，当前长度:', bodyData.length);
-      });
-      
-      req.on('end', () => {
-        try {
-          const parsed = JSON.parse(bodyData);
-          console.log('请求体解析完成:', JSON.stringify(parsed).substring(0, 200));
-          resolve(parsed);
-        } catch (error) {
-          console.error('JSON解析错误:', error.message);
-          reject(error);
-        }
-      });
-      
-      req.on('error', error => {
-        console.error('请求流错误:', error);
-        reject(error);
-      });
-    });
+    let requestData;
+    
+    if (typeof req.body === 'string') {
+      requestData = JSON.parse(req.body);
+    } else {
+      requestData = req.body;
+    }
 
     const { message, scene } = requestData;
     console.log('请求参数:', { message: message?.substring(0, 100), scene });
@@ -160,14 +145,14 @@ ${message}
           content: userMessage
         }
       ],
-      max_tokens: 2500,  // 增加token限制以获得更详细回复
+      max_tokens: 2500,
       temperature: 0.8,
       stream: false
     };
 
     console.log('请求体长度:', JSON.stringify(deepseekRequest).length);
 
-    // 添加超时控制来解决响应时间长的问题
+    // 添加超时控制
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
       controller.abort();
@@ -195,7 +180,7 @@ ${message}
         return res.status(500).json({ 
           success: false,
           error: `API请求失败: ${response.status}`,
-          details: errorText.substring(0, 500) // 限制日志长度
+          details: errorText.substring(0, 500)
         });
       }
 
@@ -230,4 +215,4 @@ ${message}
       type: error.name
     });
   }
-};
+}
