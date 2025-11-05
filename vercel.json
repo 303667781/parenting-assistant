@@ -10,7 +10,7 @@
       "use": "@vercel/node"
     },
     {
-      "src": "index.html",
+      "src": "**/*.html",
       "use": "@vercel/static"
     },
     {
@@ -29,8 +29,7 @@
     },
     {
       "src": "/api/deepseek",
-      "dest": "/api/deepseek.js",
-      "methods": ["GET", "POST", "OPTIONS"]
+      "dest": "/api/deepseek.js"
     },
     {
       "src": "/manifest.json",
